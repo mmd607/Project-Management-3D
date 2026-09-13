@@ -6,13 +6,7 @@
 
 **Discover · Analyze · Understand · Visualize · Manage**
 
-<br>
 
-<p align="center">
-  <img src="docs/assets/project-intelligence-manager-banner.png" alt="Project Intelligence Manager" width="100%">
-</p>
-
-<br>
 
 > **Turn your local development folder into an intelligent project universe.**
 
