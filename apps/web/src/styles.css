@@ -1,0 +1,574 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Design tokens — Decision J (dark / deep-burgundy visual system for Graph Mode,
+     lightly reused in the existing list/detail UI for coherence between modes). */
+  /* Palette revised for the folder main view: calmer navy/violet, far less red. The old
+     token names are kept so the table / 3D graph / command palette pick the theme up too. */
+  --bg-0: #0c1018;
+  --bg-1: #0e131c;
+  --bg-2: #101623;
+  --surface-1: #111722;
+  --surface-2: #151d2a;
+  --surface-3: #1b2536;
+  --border-subtle: #263143;
+  --accent: #e84a72;
+  --accent-bright: #ff6a8e;
+  --accent-glow: rgba(232, 74, 114, 0.3);
+  --text-primary: #f3f6fa;
+  --text-secondary: #94a0b2;
+  --text-muted: #6d7a8f;
+  --glass-bg: rgba(17, 23, 34, 0.82);
+}
+
+body {
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--text-primary);
+}
+
+.app-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+.workspace-picker-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.workspace-picker input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: inherit;
+  border-radius: 6px;
+}
+
+button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.workspace-current {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 4px 0 16px;
+}
+
+.workspace-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.project-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.project-list th,
+.project-list td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+}
+
+.project-list tr[role="button"] {
+  cursor: pointer;
+}
+
+.project-list tr.selected {
+  background: linear-gradient(90deg, rgba(194, 59, 77, 0.14), transparent);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.badge-fact {
+  background: #17301f;
+  color: #7fdb9a;
+}
+
+.badge-inferred {
+  background: #2b2510;
+  color: #e0c368;
+}
+
+.badge-ai {
+  background: #1b2440;
+  color: #8fb1ff;
+}
+
+.badge-unknown {
+  background: #2a2a2a;
+  color: #999;
+}
+
+.error-banner {
+  background: rgba(232, 74, 114, 0.12);
+  border: 1px solid rgba(232, 74, 114, 0.35);
+  color: #f7c1d1;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.empty-state-hint {
+  opacity: 0.65;
+  font-size: 0.9rem;
+}
+
+.evidence-list,
+.insight-list {
+  list-style: none;
+  padding: 0;
+}
+
+.evidence-list li,
+.insight-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+}
+
+.recommendation-rationale {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.insight-meta {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.scan-status-warning {
+  color: #e0c368;
+}
+
+.scan-summary-line {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ---------- Graph Mode (Decision J) ---------- */
+
+.mode-switcher {
+  display: inline-flex;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: 12px;
+  vertical-align: middle;
+}
+
+.mode-switcher button {
+  border: none;
+  border-radius: 0;
+  background: var(--surface-1);
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.mode-switcher button:hover:not(:disabled) {
+  box-shadow: none;
+  background: var(--surface-3);
+}
+
+.mode-switcher button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.mode-switcher button:disabled {
+  opacity: 0.35;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.graph-unavailable-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.graph-shell {
+  position: absolute;
+  inset: 0;
+  margin-top: 0;
+  height: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(155, 109, 255, 0.14), transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.03), transparent 55%),
+    var(--bg-0);
+}
+
+.graph-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.graph-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--accent-bright);
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 200px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  font-size: 0.82rem;
+  z-index: 5;
+}
+
+.graph-tooltip h4 {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.graph-tooltip .tooltip-line {
+  color: var(--text-secondary);
+  margin: 2px 0;
+}
+
+.graph-tooltip .tooltip-hint {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.graph-panel-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 8;
+}
+
+.graph-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  bottom: 20px;
+  width: min(400px, 90%);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-right: 2px solid var(--accent-bright);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.55), 0 0 24px var(--accent-glow);
+  border-radius: 14px;
+  z-index: 9;
+  overflow-y: auto;
+  padding: 20px 22px;
+}
+
+.graph-panel-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  z-index: 10;
+}
+
+.graph-panel .project-detail h2 {
+  color: var(--text-primary);
+}
+
+.graph-hint-overlay {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.graph-controls-bar {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  display: flex;
+  gap: 8px;
+  z-index: 4;
+}
+
+.graph-controls-bar button {
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+}
+
+.graph-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  color: var(--text-secondary);
+  z-index: 2;
+}
+
+.graph-empty-state h3 {
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ---------- Command Palette (Phase 2 §8) ---------- */
+
+.command-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  z-index: 50;
+}
+
+.command-palette {
+  width: min(560px, 90vw);
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--border-subtle);
+  border-top: 2px solid var(--accent-bright);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px var(--accent-glow);
+  overflow: hidden;
+}
+
+.command-palette input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 16px 18px;
+  outline: none;
+}
+
+.command-palette-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.command-palette-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.command-palette-list li.active {
+  background: rgba(194, 59, 77, 0.18);
+  color: var(--text-primary);
+  box-shadow: inset 2px 0 0 var(--accent-bright);
+}
+
+.command-palette-hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.command-palette-empty {
+  padding: 14px;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+.command-palette-footer {
+  display: flex;
+  gap: 16px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Tech Stack pills (Decision L) ---------- */
+
+.tech-stack-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 18px;
+}
+
+.tech-pill {
+  font-size: 0.78rem;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.tech-pill-language {
+  border-color: rgba(194, 59, 77, 0.4);
+  color: #e3aab3;
+}
+
+.tech-pill-framework {
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #c3b1f5;
+}
+
+.tech-pill-packageManager,
+.tech-pill-ecosystem {
+  border-color: rgba(34, 211, 238, 0.35);
+  color: #a6e6f0;
+}
+
+/* ---------- Health Score panel ---------- */
+
+.scan-size-line {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 4px 0 14px;
+}
+
+.scan-size-line span[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+.health-score {
+  margin-bottom: 6px;
+}
+
+.health-score-overall {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.health-score-overall-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.health-score-unit {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.health-score-coverage {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.health-score-components {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.health-score-row {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.health-score-row-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.health-score-weight {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.health-score-row-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.health-score-bar-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.health-score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #9b6dff);
+  border-radius: 999px;
+}
+
+.health-score-method {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
